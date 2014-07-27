@@ -1,6 +1,7 @@
 package org.punnoose.hibernate.model;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +19,9 @@ public class User {
 	@Column(name="USER_NAME", length=64)	
 	private String name;
 	
+	@Embedded
+	private Address address;
+	
 	public int getId() {
 		return id;
 	}
@@ -34,8 +38,16 @@ public class User {
 		this.name = name;
 	}
 
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
 	@Override
 	public String toString() {
-		return "[" + getId() + ":" + getName() + "]";
+		return "[" + getId() + ":" + getName() + address + "]";
 	}
 }
