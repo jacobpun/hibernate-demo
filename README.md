@@ -1,3 +1,3 @@
 hibernate-demo
 ==============
-+ BasicEntityDemo - Basic Entity and Embeddable Demo
++ BasicEntityDemo - Demo of Entity, Embeddable, Embedded & ElementCollection Annotations
