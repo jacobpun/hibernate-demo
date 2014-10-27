@@ -1,32 +1,42 @@
 package org.punnoose.hibernate.service;
 
+import org.punnoose.hibernate.dao.CompanyDao;
 import org.punnoose.hibernate.dao.UserDao;
+import org.punnoose.hibernate.dao.VehicleDao;
+import org.punnoose.hibernate.model.ProfessionalExperience;
 import org.punnoose.hibernate.model.User;
+import org.punnoose.hibernate.model.Vehicle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserService  {
+public class UserService{
 
 	@Autowired
-	private UserDao dao;
+	private UserDao userDao;
+
+	@Autowired
+	private VehicleDao vehicleDao;
+	
+	@Autowired
+	private CompanyDao companyDao;
 	
 	public UserDao getDao() {
-		return dao;
+		return userDao;
 	}
 
 	public void setDao(UserDao dao) {
-		this.dao = dao;
+		this.userDao = dao;
 	}
 
 	@Transactional
 	public void save(User user){
-		dao.save(user);
+		userDao.save(user);
 	}
-	
+
 	@Transactional(readOnly=true)
 	public User getById(int userId){
-		return dao.getById(userId);
+		return userDao.getById(userId);
 	}
 }

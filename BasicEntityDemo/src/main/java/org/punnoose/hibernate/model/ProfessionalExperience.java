@@ -2,8 +2,10 @@ package org.punnoose.hibernate.model;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -17,11 +19,13 @@ public class ProfessionalExperience {
 	@Column(name="TO_DATE")
 	private Date to;
 	
-	@Column(name="COMPANY_NAME")
-	private String companyName;
+	@OneToOne(cascade=CascadeType.PERSIST)
+	private Company company;
 	
 	@Column(name="JOB_TITLE")
 	private String title;
+
+	private String jobDescription;
 	
 	public Date getFrom() {
 		return from;
@@ -35,16 +39,22 @@ public class ProfessionalExperience {
 	public void setTo(Date to) {
 		this.to = to;
 	}
-	public String getCompanyName() {
-		return companyName;
+	public Company getCompany() {
+		return company;
 	}
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
+	public void setCompany(Company company) {
+		this.company = company;
 	}
 	public String getTitle() {
 		return title;
 	}
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	public String getJobDescription() {
+		return jobDescription;
+	}
+	public void setJobDescription(String jobDescription) {
+		this.jobDescription = jobDescription;
 	}
 }
