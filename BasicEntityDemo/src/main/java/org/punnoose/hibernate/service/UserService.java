@@ -11,17 +11,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class UserService{
+public class UserService {
 
 	@Autowired
 	private UserDao userDao;
 
 	@Autowired
 	private VehicleDao vehicleDao;
-	
+
 	@Autowired
 	private CompanyDao companyDao;
-	
+
 	public UserDao getDao() {
 		return userDao;
 	}
@@ -31,12 +31,21 @@ public class UserService{
 	}
 
 	@Transactional
-	public void save(User user){
+	public void save(User user) {
 		userDao.save(user);
 	}
 
-	@Transactional(readOnly=true)
-	public User getById(int userId){
+	@Transactional(readOnly = true)
+	public User getById(int userId) {
 		return userDao.getById(userId);
+	}
+
+	@Transactional
+	public void delete(User user) {
+		User spouse = user.getSpouse();
+		spouse.setSpouse(null);	
+		userDao.update(spouse);
+		
+		userDao.delete(user);
 	}
 }

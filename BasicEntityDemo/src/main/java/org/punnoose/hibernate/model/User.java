@@ -57,8 +57,11 @@ public class User {
 	@JoinColumn(name="SPOUSE_ID")
 	private User spouse;
 	
-	@OneToMany(mappedBy="owner", cascade=CascadeType.PERSIST)
+	@OneToMany(mappedBy="owner", cascade=CascadeType.ALL)
 	private Collection<Vehicle> vehicles = new ArrayList<>();
+	
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+	private Collection<BankAccount> bankAccounts = new ArrayList<>(); 
 	
 	public int getId() {
 		return id;
@@ -106,7 +109,8 @@ public class User {
 
 	public void setSpouse(User spouse) {
 		this.spouse = spouse;
-		spouse.spouse=this;
+		if(spouse != null)
+			spouse.spouse=this;
 	}
 
 	public Collection<Vehicle> getVehicles() {
@@ -118,5 +122,13 @@ public class User {
 		for (Vehicle vehicle : vehicles) {
 			vehicle.setOwner(this);
 		}
+	}
+
+	public Collection<BankAccount> getBankAccounts() {
+		return bankAccounts;
+	}
+
+	public void setBankAccounts(Collection<BankAccount> bankAccounts) {
+		this.bankAccounts = bankAccounts;
 	}
 }

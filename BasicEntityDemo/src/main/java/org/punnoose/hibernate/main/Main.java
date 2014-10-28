@@ -4,8 +4,13 @@ import static org.punnoose.hibernate.model.builder.UserBuilder.aUser;
 
 import java.util.GregorianCalendar;
 
+import org.punnoose.hibernate.model.BankAccount;
+import org.punnoose.hibernate.model.Car;
 import org.punnoose.hibernate.model.Company;
+import org.punnoose.hibernate.model.LoanAccount;
 import org.punnoose.hibernate.model.RegistrationDetails;
+import org.punnoose.hibernate.model.SavingsAccount;
+import org.punnoose.hibernate.model.Truck;
 import org.punnoose.hibernate.model.User;
 import org.punnoose.hibernate.model.Vehicle;
 import org.punnoose.hibernate.service.UserService;
@@ -19,12 +24,17 @@ public class Main {
 		UserService userSvc = (UserService) ctx.getBean("userService");
 
 		//create vehicles
-		Vehicle v1 = new Vehicle("Toyota", "Rav4", new RegistrationDetails("NJ", "001"));
+		Vehicle v1 = new Car("Toyota", "Rav4", new RegistrationDetails("NJ", "001"),4);
 		Vehicle v2 = new Vehicle("Hyundai", "Accent", new RegistrationDetails("NJ", "002"));
+		Vehicle v3 = new Truck ("Volvo", "Volvo", new RegistrationDetails("NY", "001"), 10000);
 		
 		//create companies
 		Company company1 =new Company("Company1");
 		Company company2 =new Company("Company2");
+		
+		//create bank accounts
+		BankAccount acct1 = new SavingsAccount(001, "BOA", 10000l, 0.01d);
+		BankAccount acct2 = new LoanAccount(002, "BOA", 10000l, 0.01d);
 		
 		// Create user1
 		User user = aUser("User 1")
@@ -37,8 +47,11 @@ public class Main {
 						new GregorianCalendar(2000, 01, 01).getTime(),
 						new GregorianCalendar(2000, 01, 01).getTime(),
 						company2, "Title 2", "Some description")
-				.withVehicles(v1)
-				.withVehicles(v2)
+				.withVehicle(v1)
+				.withVehicle(v2)
+				.withVehicle(v3)
+				.withBankAccount(acct1)
+				.withBankAccount(acct2)
 				.build();
 
 		// Create user2
@@ -49,5 +62,10 @@ public class Main {
 		
 		userSvc.save(user);
 
+		System.out.println("ID after save: "  + user.getId());
+		
+		userSvc.delete(user);
+		System.out.println("ID after delete: "  + user.getId());
+		
 	}
 }

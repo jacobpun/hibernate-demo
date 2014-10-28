@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import org.punnoose.hibernate.model.Address;
+import org.punnoose.hibernate.model.BankAccount;
 import org.punnoose.hibernate.model.Company;
 import org.punnoose.hibernate.model.ProfessionalExperience;
 import org.punnoose.hibernate.model.User;
@@ -15,6 +16,7 @@ public class UserBuilder {
 	private Address address;
 	private Collection<ProfessionalExperience> professionalExperiences = new ArrayList<>();
 	private Collection<Vehicle> vehicles = new ArrayList<>();
+	private Collection<BankAccount> bankAccounts = new ArrayList<>();
 	
 
 	public static UserBuilder aUser(String name){
@@ -48,11 +50,17 @@ public class UserBuilder {
 		user.setProfessionalExperiences(professionalExperiences);
 		user.setAddress(address);
 		user.setVehicles(vehicles);
+		user.setBankAccounts(bankAccounts);
 		return user;
 	}
 
-	public UserBuilder withVehicles(Vehicle vehicle) {
+	public UserBuilder withVehicle(Vehicle vehicle) {
 		this.vehicles.add(vehicle);
+		return this;
+	}
+
+	public UserBuilder withBankAccount(BankAccount acct) {
+		bankAccounts.add(acct);
 		return this;
 	}
 }

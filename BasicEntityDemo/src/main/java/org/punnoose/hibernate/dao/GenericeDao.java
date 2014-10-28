@@ -28,10 +28,17 @@ public class GenericeDao<T, K extends Serializable> {
 
 	public void save(T entity) {
 		factory.getCurrentSession().persist(entity);
-		System.out.println("Saved" + entity);
 	}
 
 	public T getById(K entityId) {
 		return (T) factory.getCurrentSession().get(entityClass, entityId);
+	}
+	
+	public void delete(T entity){
+		factory.getCurrentSession().delete(entity);
+	}
+
+	public void update(T entity){
+		factory.getCurrentSession().update(entity);
 	}
 }
