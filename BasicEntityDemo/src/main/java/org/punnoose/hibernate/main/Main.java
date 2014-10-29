@@ -4,6 +4,7 @@ import static org.punnoose.hibernate.model.builder.UserBuilder.aUser;
 
 import java.util.GregorianCalendar;
 
+import org.punnoose.hibernate.cachestatistics.CacheStatistics;
 import org.punnoose.hibernate.model.BankAccount;
 import org.punnoose.hibernate.model.Car;
 import org.punnoose.hibernate.model.Company;
@@ -15,12 +16,15 @@ import org.punnoose.hibernate.model.User;
 import org.punnoose.hibernate.model.Vehicle;
 import org.punnoose.hibernate.service.UserService;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Main {
 	public static void main(String[] args) {
+
 		ApplicationContext ctx = new ClassPathXmlApplicationContext(
 				"context.xml");
+		
 		UserService userSvc = (UserService) ctx.getBean("userService");
 
 		//create vehicles
@@ -62,10 +66,13 @@ public class Main {
 		
 		userSvc.save(user);
 
-		System.out.println("ID after save: "  + user.getId());
+		userSvc.getById(1);
+		userSvc.getById(1);
+
+		//print the cache statistics
+		CacheStatistics.printCacheStatistics("user");
 		
-		userSvc.delete(user);
-		System.out.println("ID after delete: "  + user.getId());
-		
+		//close application context
+		((ConfigurableApplicationContext)ctx).close();
 	}
 }

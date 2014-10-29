@@ -23,6 +23,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionId;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -30,6 +32,7 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "USER_DETAILS")
 @SecondaryTable(name = "USER_ADDRESS", pkJoinColumns = @PrimaryKeyJoinColumn(name = "USER_ID"))
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE, region="user")
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -60,7 +63,7 @@ public class User {
 	@OneToMany(mappedBy="owner", cascade=CascadeType.ALL)
 	private Collection<Vehicle> vehicles = new ArrayList<>();
 	
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
 	private Collection<BankAccount> bankAccounts = new ArrayList<>(); 
 	
 	public int getId() {

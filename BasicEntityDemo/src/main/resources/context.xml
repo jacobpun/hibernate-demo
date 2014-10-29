@@ -23,7 +23,7 @@
 	</bean>
 
 	<bean id="sessionFactory"
-		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean" destroy-method="destroy">
 		<property name="dataSource" ref="dataSource" />
 		<property name="packagesToScan" value="org.punnoose.hibernate.model"></property>
 		<property name="hibernateProperties">
@@ -31,6 +31,10 @@
 				<prop key="hibernate.dialect">org.hibernate.dialect.OracleDialect</prop>
 				<prop key="hibernate.hbm2ddl.auto">create</prop>
 				<prop key="hibernate.show_sql">true</prop>
+       			<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
+        	 	<prop key="hibernate.cache.use_second_level_cache">true</prop>
+        		<prop key="hibernate.cache.use_query_cache">true</prop>
+        		<prop key="hibernate.cache.provider_configuration_file_resource_path">ehcache.xml</prop> 
 			</props>
 		</property>
 	</bean>
@@ -39,5 +43,4 @@
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
-
 </beans>
