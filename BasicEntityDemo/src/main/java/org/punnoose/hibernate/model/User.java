@@ -17,6 +17,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
@@ -32,7 +34,11 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "USER_DETAILS")
 @SecondaryTable(name = "USER_ADDRESS", pkJoinColumns = @PrimaryKeyJoinColumn(name = "USER_ID"))
-@Cache(usage=CacheConcurrencyStrategy.READ_WRITE, region="user")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "user")
+@NamedQueries({ 
+	@NamedQuery(name = "User.findByVehicleType", query = "select distinct u from User u inner join fetch u.vehicles v where u.id in (select iu.id from User iu inner join iu.vehicles iv where iv.class=:vehicleType)"), 
+	@NamedQuery(name = "User.findByEmployer", query = "select distinct u from User u inner join fetch u.professionalExperiences e where u.id in (select iu.id from User iu inner join iu.professionalExperiences ie where ie.company=:company)") 
+})
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -50,22 +56,22 @@ public class User {
 			@AttributeOverride(name = "country", column = @Column(name = "COUNTRY", table = "USER_ADDRESS")) })
 	private Address address;
 
-	@ElementCollection(fetch=FetchType.LAZY)
+	@ElementCollection(fetch = FetchType.LAZY)
 	@JoinTable(name = "USER_EXPERIENCE", joinColumns = @JoinColumn(name = "USER_ID"))
 	@GenericGenerator(name = "hilo-generator", strategy = "hilo")
 	@CollectionId(columns = { @Column(name = "EXPERIENCE_ID") }, generator = "hilo-generator", type = @Type(type = "long"))
 	private Collection<ProfessionalExperience> professionalExperiences = new ArrayList<>();
 
-	@OneToOne(cascade=CascadeType.PERSIST)
-	@JoinColumn(name="SPOUSE_ID")
+	@OneToOne(cascade = CascadeType.PERSIST)
+	@JoinColumn(name = "SPOUSE_ID")
 	private User spouse;
-	
-	@OneToMany(mappedBy="owner", cascade=CascadeType.ALL)
+
+	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
 	private Collection<Vehicle> vehicles = new ArrayList<>();
-	
-	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
-	private Collection<BankAccount> bankAccounts = new ArrayList<>(); 
-	
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Collection<BankAccount> bankAccounts = new ArrayList<>();
+
 	public int getId() {
 		return id;
 	}
@@ -112,8 +118,8 @@ public class User {
 
 	public void setSpouse(User spouse) {
 		this.spouse = spouse;
-		if(spouse != null)
-			spouse.spouse=this;
+		if (spouse != null)
+			spouse.spouse = this;
 	}
 
 	public Collection<Vehicle> getVehicles() {

@@ -1,11 +1,12 @@
 package org.punnoose.hibernate.service;
 
+import java.util.List;
+
 import org.punnoose.hibernate.dao.CompanyDao;
 import org.punnoose.hibernate.dao.UserDao;
 import org.punnoose.hibernate.dao.VehicleDao;
-import org.punnoose.hibernate.model.ProfessionalExperience;
+import org.punnoose.hibernate.model.Company;
 import org.punnoose.hibernate.model.User;
-import org.punnoose.hibernate.model.Vehicle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,9 +44,20 @@ public class UserService {
 	@Transactional
 	public void delete(User user) {
 		User spouse = user.getSpouse();
-		spouse.setSpouse(null);	
+		spouse.setSpouse(null);
 		userDao.update(spouse);
-		
 		userDao.delete(user);
 	}
+
+	@Transactional(readOnly = true)
+	public List<User> findByVehicleType(String vehicleType, int maxResults) {
+		return userDao.findByVehicleType(vehicleType, maxResults);
+	}
+
+	@Transactional(readOnly = true)
+	public List<User> findByEmployer(Company company) {
+		return userDao.findByEmployer(company);
+	}
+
+
 }

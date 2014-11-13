@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class GenericeDao<T, K extends Serializable> {
 	@Autowired
-	private SessionFactory factory;
+	protected SessionFactory factory;
 	private Class<T> entityClass;
 
 	@SuppressWarnings("unchecked")
@@ -39,6 +39,6 @@ public class GenericeDao<T, K extends Serializable> {
 	}
 
 	public void update(T entity){
-		factory.getCurrentSession().update(entity);
+		factory.getCurrentSession().merge(entity);
 	}
 }

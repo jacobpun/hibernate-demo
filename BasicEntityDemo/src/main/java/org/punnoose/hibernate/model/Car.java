@@ -9,6 +9,10 @@ public class Car extends Vehicle{
 
 	private int passangersCount;
 	
+	public Car(){
+		super();
+	}
+	
 	public Car(String make, String model, RegistrationDetails regnDetails, int passangersCount) {
 		super(make, model, regnDetails);
 		this.passangersCount = passangersCount;

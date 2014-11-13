@@ -8,6 +8,9 @@ import javax.persistence.Entity;
 public class Truck extends Vehicle {
 
 	private long capacityInLbs;
+	public Truck(){
+		
+	}
 	
 	public Truck(String make, String model, RegistrationDetails regnDetails, long capacityInLbs) {
 		super(make, model, regnDetails);

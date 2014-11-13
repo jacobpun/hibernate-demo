@@ -3,6 +3,7 @@ package org.punnoose.hibernate.main;
 import static org.punnoose.hibernate.model.builder.UserBuilder.aUser;
 
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.punnoose.hibernate.cachestatistics.CacheStatistics;
 import org.punnoose.hibernate.model.BankAccount;
@@ -13,7 +14,7 @@ import org.punnoose.hibernate.model.RegistrationDetails;
 import org.punnoose.hibernate.model.SavingsAccount;
 import org.punnoose.hibernate.model.Truck;
 import org.punnoose.hibernate.model.User;
-import org.punnoose.hibernate.model.Vehicle;
+import org.punnoose.hibernate.model.*;
 import org.punnoose.hibernate.service.UserService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -61,6 +62,10 @@ public class Main {
 		// Create user2
 		User user2 = aUser("User 2")
 				.havingAddress("Street 1", "NJ", "US")
+				.withProfessionalExperience(
+						new GregorianCalendar(2000, 01, 01).getTime(),
+						new GregorianCalendar(2000, 01, 01).getTime(),
+						company1, "Title 1","Some description")
 				.build();
 		user.setSpouse(user2);
 		
@@ -69,6 +74,25 @@ public class Main {
 		userSvc.getById(1);
 		userSvc.getById(1);
 
+		List<User> usersHavingCar = userSvc.findByVehicleType("C", 10);
+		for (User tmpUser : usersHavingCar) {
+			System.out.println("User Having Car: " + tmpUser.getName());
+			System.out.println("Vehicles: ");
+			for (Vehicle tmpVehicle : tmpUser.getVehicles()) {
+				System.out.println("Vehicle: " + tmpVehicle.getMake() + " " + tmpVehicle.getModel());
+			}
+		}
+
+		
+		List<User> usersWorkedForCompany1 = userSvc.findByEmployer(company1);
+		for (User tmpUser : usersWorkedForCompany1) {
+			System.out.println("User Woked for Company 1: " + tmpUser.getName());
+			System.out.println("Employers: ");
+			for (ProfessionalExperience exp : tmpUser.getProfessionalExperiences()) {
+				System.out.println("Company: " + exp.getCompany().getCompanyName());
+			}
+		}
+		
 		//print the cache statistics
 		CacheStatistics.printCacheStatistics("user");
 		

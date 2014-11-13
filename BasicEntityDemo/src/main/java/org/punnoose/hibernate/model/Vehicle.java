@@ -37,6 +37,8 @@ public class Vehicle {
 	@NotFound(action=NotFoundAction.IGNORE)
 	private User owner;
 	
+	public Vehicle(){}
+	
 	public Vehicle(String make, String model, RegistrationDetails regnDetails) {
 		this.make = make;
 		this.model = model;
