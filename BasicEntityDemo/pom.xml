@@ -8,12 +8,12 @@
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
-			<version>1.0.0.GA</version>
+			<version>${javax-validation-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>4.3.2.Final</version>
+			<version>${hibernate-validator-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -63,12 +63,12 @@
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
-			<version>1.0.13</version>
+			<version>${logback-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
-			<version>1.0.13</version>
+			<version>${logback-version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -85,6 +85,9 @@
 		</plugins>
 	</build>
 	<properties>
+		<hibernate-validator-version>4.3.2.Final</hibernate-validator-version>
+		<javax-validation-version>1.0.0.GA</javax-validation-version>
+		<logback-version>1.0.13</logback-version>
 		<spring-version>3.2.12.RELEASE</spring-version>
 		<oracle-version>11.2.0</oracle-version>
 		<hibernate-version>4.2.8.Final</hibernate-version>
