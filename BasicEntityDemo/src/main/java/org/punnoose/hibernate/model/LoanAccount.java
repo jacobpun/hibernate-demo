@@ -1,9 +1,12 @@
 package org.punnoose.hibernate.model;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 @Entity(name="LOAN_ACCOUNT")
+@DiscriminatorValue("L")
 public class LoanAccount extends BankAccount {
 	
 	@Column(name="LOAN_AMOUNT")
@@ -11,6 +14,8 @@ public class LoanAccount extends BankAccount {
 	
 	@Column(name="INTEREST_RATE")
 	private double interestRate;
+	
+	private String accountType="L";
 	
 	public LoanAccount() {
 		super();

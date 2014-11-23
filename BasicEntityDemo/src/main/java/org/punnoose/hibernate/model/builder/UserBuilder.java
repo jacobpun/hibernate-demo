@@ -3,6 +3,7 @@ package org.punnoose.hibernate.model.builder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.punnoose.hibernate.model.Address;
 import org.punnoose.hibernate.model.BankAccount;
@@ -15,7 +16,7 @@ public class UserBuilder {
 	private String name;
 	private Address address;
 	private Collection<ProfessionalExperience> professionalExperiences = new ArrayList<>();
-	private Collection<Vehicle> vehicles = new ArrayList<>();
+	private List<Vehicle> vehicles = new ArrayList<>();
 	private Collection<BankAccount> bankAccounts = new ArrayList<>();
 	
 
@@ -45,8 +46,8 @@ public class UserBuilder {
 	}
 	
 	public User build(){
-		User user = new User();
-		user.setName(name);
+		User user = new User(name);
+		//user.setName(name);
 		user.setProfessionalExperiences(professionalExperiences);
 		user.setAddress(address);
 		user.setVehicles(vehicles);

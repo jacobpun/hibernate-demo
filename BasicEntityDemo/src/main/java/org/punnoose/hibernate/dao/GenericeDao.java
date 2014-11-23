@@ -41,4 +41,8 @@ public class GenericeDao<T, K extends Serializable> {
 	public void update(T entity){
 		factory.getCurrentSession().merge(entity);
 	}
+	
+/*	public void deleteAll(){
+		factory.getCurrentSession().
+	}*/
 }

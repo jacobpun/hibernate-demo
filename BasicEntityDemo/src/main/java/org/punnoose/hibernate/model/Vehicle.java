@@ -32,7 +32,7 @@ public class Vehicle {
 	@Column(name="MODEL")
 	private String model;
 	
-	@ManyToOne
+	@ManyToOne(optional=false)
 	@JoinColumn(name="USER_ID")
 	@NotFound(action=NotFoundAction.IGNORE)
 	private User owner;

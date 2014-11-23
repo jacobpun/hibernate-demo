@@ -3,7 +3,6 @@ package org.punnoose.hibernate.main;
 import static org.punnoose.hibernate.model.builder.UserBuilder.aUser;
 
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import org.punnoose.hibernate.cachestatistics.CacheStatistics;
 import org.punnoose.hibernate.model.BankAccount;
@@ -14,7 +13,7 @@ import org.punnoose.hibernate.model.RegistrationDetails;
 import org.punnoose.hibernate.model.SavingsAccount;
 import org.punnoose.hibernate.model.Truck;
 import org.punnoose.hibernate.model.User;
-import org.punnoose.hibernate.model.*;
+import org.punnoose.hibernate.model.Vehicle;
 import org.punnoose.hibernate.service.UserService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -39,10 +38,10 @@ public class Main {
 		
 		//create bank accounts
 		BankAccount acct1 = new SavingsAccount(001, "BOA", 10000l, 0.01d);
-		BankAccount acct2 = new LoanAccount(002, "BOA", 10000l, 0.01d);
+		BankAccount acct2 = new LoanAccount(002, "BOA", 2000l, 0.01d);
 		
 		// Create user1
-		User user = aUser("User 1")
+		User user = aUser("VERY LOMG NAME VER User 1")
 				.havingAddress("Street 1", "NJ", "US")
 				.withProfessionalExperience(
 						new GregorianCalendar(2000, 01, 01).getTime(),
@@ -55,8 +54,6 @@ public class Main {
 				.withVehicle(v1)
 				.withVehicle(v2)
 				.withVehicle(v3)
-				.withBankAccount(acct1)
-				.withBankAccount(acct2)
 				.build();
 
 		// Create user2
@@ -67,31 +64,17 @@ public class Main {
 						new GregorianCalendar(2000, 01, 01).getTime(),
 						company1, "Title 1","Some description")
 				.build();
-		user.setSpouse(user2);
-		
+
 		userSvc.save(user);
 
-		userSvc.getById(1);
-		userSvc.getById(1);
-
-		List<User> usersHavingCar = userSvc.findByVehicleType("C", 10);
-		for (User tmpUser : usersHavingCar) {
-			System.out.println("User Having Car: " + tmpUser.getName());
-			System.out.println("Vehicles: ");
-			for (Vehicle tmpVehicle : tmpUser.getVehicles()) {
-				System.out.println("Vehicle: " + tmpVehicle.getMake() + " " + tmpVehicle.getModel());
-			}
-		}
-
+		User user_r1 = userSvc.getById(1);
+		//User user_r2 = userSvc.getById(user.getId());
 		
-		List<User> usersWorkedForCompany1 = userSvc.findByEmployer(company1);
-		for (User tmpUser : usersWorkedForCompany1) {
-			System.out.println("User Woked for Company 1: " + tmpUser.getName());
-			System.out.println("Employers: ");
-			for (ProfessionalExperience exp : tmpUser.getProfessionalExperiences()) {
-				System.out.println("Company: " + exp.getCompany().getCompanyName());
-			}
-		}
+		user_r1.setName("Name_R1");
+		//user_r2.setName("Name_R2");
+		
+		userSvc.update(user_r1);
+		//userSvc.update(user_r2); -> Will throw exception
 		
 		//print the cache statistics
 		CacheStatistics.printCacheStatistics("user");

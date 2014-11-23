@@ -2,12 +2,14 @@ package org.punnoose.hibernate.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -21,33 +23,71 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.persistence.Version;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionId;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.punnoose.hibernate.model.converter.SchoolToStringConverter;
 
 @Entity
 @Table(name = "USER_DETAILS")
 @SecondaryTable(name = "USER_ADDRESS", pkJoinColumns = @PrimaryKeyJoinColumn(name = "USER_ID"))
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "user")
-@NamedQueries({ 
-	@NamedQuery(name = "User.findByVehicleType", query = "select distinct u from User u inner join fetch u.vehicles v where u.id in (select iu.id from User iu inner join iu.vehicles iv where iv.class=:vehicleType)"), 
-	@NamedQuery(name = "User.findByEmployer", query = "select distinct u from User u inner join fetch u.professionalExperiences e where u.id in (select iu.id from User iu inner join iu.professionalExperiences ie where ie.company=:company)") 
-})
+@NamedQueries({
+		@NamedQuery(name = "User.findByVehicleType", query = "select distinct u from User u inner join fetch u.vehicles v where u.id in (select iu.id from User iu inner join iu.vehicles iv where iv.class=:vehicleType)"),
+		@NamedQuery(name = "User.findByEmployer", query = "select distinct u from User u inner join fetch u.professionalExperiences e where u.id in (select iu.id from User iu inner join iu.professionalExperiences ie where ie.company=:company)"),
+		@NamedQuery(name = "User.usersCountInCountry", query = "select count(u) from User u where u.address.country=:country"),
+		@NamedQuery(name = "User.countByCountry", query = "select new org.punnoose.hibernate.model.reporting.CountrySummary(u.address.country, count(u)) from User u group by u.address.country") })
+@DynamicInsert
+@DynamicUpdate
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "USER_ID")
-	private int id;
+	private Long id;
 
-	@Column(name = "USER_NAME", length = 64)
-	@Basic(optional = false)
+	@Column(name = "USER_NAME", nullable = false, length = 64)
+	@Size(min=5, max=64) 
 	private String name;
+
+	@Column(name = "ACTIVE")
+	@Type(type = "yes_no")
+	private boolean active = true;
+
+	@Column(name = "TS", insertable = false)
+	@Temporal(TemporalType.DATE)
+	@Generated(GenerationTime.INSERT)
+	private Date timeStamp;
+
+	@Column(name ="SCHOOL_NAME", length=64)
+	@Convert(converter = SchoolToStringConverter.class, disableConversion = false)
+	@Transient
+	private School school;
+	
+	@Version
+	private long versionNumber;
+	
+	private User() {
+	}
+
+	public User(String name) {
+		this.name = name;
+	}
 
 	@Embedded
 	@AttributeOverrides({
@@ -60,24 +100,28 @@ public class User {
 	@JoinTable(name = "USER_EXPERIENCE", joinColumns = @JoinColumn(name = "USER_ID"))
 	@GenericGenerator(name = "hilo-generator", strategy = "hilo")
 	@CollectionId(columns = { @Column(name = "EXPERIENCE_ID") }, generator = "hilo-generator", type = @Type(type = "long"))
+	@OrderBy("to DESC, from DESC")
 	private Collection<ProfessionalExperience> professionalExperiences = new ArrayList<>();
 
-	@OneToOne(cascade = CascadeType.PERSIST)
+	@OneToOne
 	@JoinColumn(name = "SPOUSE_ID")
 	private User spouse;
 
-	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
-	private Collection<Vehicle> vehicles = new ArrayList<>();
+	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+	@org.hibernate.annotations.IndexColumn(
+			name="POSITION", base = 1
+	)
+	@org.hibernate.annotations.LazyCollection(
+			org.hibernate.annotations.LazyCollectionOption.EXTRA
+	)
+	private List<Vehicle> vehicles = new ArrayList<>();
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@JoinTable(name = "USER_BANK_ACCT", joinColumns = { @JoinColumn(name = "USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "ACCT_ID") })
 	private Collection<BankAccount> bankAccounts = new ArrayList<>();
 
-	public int getId() {
+	public Long getId() {
 		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	public String getName() {
@@ -122,11 +166,11 @@ public class User {
 			spouse.spouse = this;
 	}
 
-	public Collection<Vehicle> getVehicles() {
+	public List<Vehicle> getVehicles() {
 		return vehicles;
 	}
 
-	public void setVehicles(Collection<Vehicle> vehicles) {
+	public void setVehicles(List<Vehicle> vehicles) {
 		this.vehicles = vehicles;
 		for (Vehicle vehicle : vehicles) {
 			vehicle.setOwner(this);
@@ -139,5 +183,21 @@ public class User {
 
 	public void setBankAccounts(Collection<BankAccount> bankAccounts) {
 		this.bankAccounts = bankAccounts;
+	}
+
+	public Date getTimeStamp() {
+		return timeStamp;
+	}
+
+	public School getSchool() {
+		return school;
+	}
+
+	public void setSchool(School school) {
+		this.school = school;
+	}
+
+	public long getVersionNumber() {
+		return versionNumber;
 	}
 }

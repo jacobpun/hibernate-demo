@@ -5,12 +5,13 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Transient;
 
 @Entity
 @Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
 public abstract class BankAccount {
 	@Id
-	@Column(name="APP_ID")
+	@Column(name="ACCT_ID")
 	private long accountId;
 	@Column(name="BANK_NAME")
 	private String bankName;
@@ -40,4 +41,5 @@ public abstract class BankAccount {
 	public void setAccountId(long accountId) {
 		this.accountId = accountId;
 	}
+
 }
